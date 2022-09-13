@@ -7,7 +7,7 @@ import seaborn as sbn
 import numpy as np
 
 FONT_FAMILY = "MS Gothic"
-BAR_WIDTH = 0.4
+BAR_WIDTH = 0.8
 GRAPH_NAME_CRYPTO = "crypto.png"
 GRAPH_NAME_KEYEX = "keyex.png"
 GRAPH_NAME_SIGN = "sign.png"
@@ -27,9 +27,9 @@ def crypto_graph(filenames=[], x_label="", y_label=""):
 
     sbn.set()
     sbn.set_style("whitegrid")
-    sbn.set_palette("RdGy")
+    sbn.set_palette("Set1")
 
-    x = np.array(["16 bytes", "64 bytes", "256 bytes", "1024 bytes", "8192 bytes", "16384 bytes"])
+    x = np.array(["16\nbytes", "64\nbytes", "256\nbytes", "1024\nbytes", "8192\nbytes", "16384\nbytes"])
 
     bars = []
 
@@ -53,12 +53,13 @@ def crypto_graph(filenames=[], x_label="", y_label=""):
     ax = fig.add_subplot(1, 1, 1)
 
     for i, bar in enumerate(bars):
-        ax.bar(x_position + BAR_WIDTH * i, bar[1], width=BAR_WIDTH, label=bar[0])
+        pos = x_position - BAR_WIDTH * (1 - (2 * i + 1) / len(bars)) / 2
+        ax.bar(pos, bar[1], width=BAR_WIDTH / len(bars), label=bar[0])
 
     ax.ticklabel_format(style="plain", axis="y")
     ax.set_xlabel("ブロックサイズ[bytes]", fontname=FONT_FAMILY)
     ax.set_ylabel("1秒あたりの処理数 [KB]", fontname=FONT_FAMILY)
-    ax.set_xticks(x_position + BAR_WIDTH / 2)
+    ax.set_xticks(x_position)
     ax.set_xticklabels(x)
     ax.grid(axis="x")
     ax.legend()
@@ -71,7 +72,7 @@ def keyex_graph(filenames=[], x_label="", y_label=""):
 
     logger.info(">>>>> keyex_graph")
 
-    BAR_WIDTH = 0.8
+    BAR_WIDTH = 0.6
 
     pat = re.compile("^(.+\))\s+(\d+(?:\.\d+)?)s\s+(\d+(?:\.\d+)?)$")  # noqa
 
@@ -123,7 +124,7 @@ def sign_verify_graph(filenames=[], x_label="", y_label=""):
 
     logger.info(">>>>> sign_verify_graph")
 
-    BAR_WIDTH = 0.8
+    BAR_WIDTH = 0.6
 
     pat = re.compile("^(.+\))\s+(\d+(?:\.\d+)?)s\s+(\d+(?:\.\d+)?)s\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$")  # noqa
 
