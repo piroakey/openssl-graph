@@ -15,10 +15,6 @@ cleanenv:
 distclean:
 	$(RM) dist/*
 
-.PHONY:
-distclean:
-	$(RM) dist/*
-
 # git archive HEAD
 .PHONY: archive
 archive:

@@ -29,7 +29,7 @@ def crypto_graph(filenames=[], x_label="", y_label=""):
     sbn.set_style("whitegrid")
     sbn.set_palette("Set1")
 
-    x = np.array(["16\nbytes", "64\nbytes", "256\nbytes", "1024\nbytes", "8192\nbytes", "16384\nbytes"])
+    x = np.array(["16 bytes", "64 bytes", "256 bytes", "1024 bytes", "8192 bytes", "16384 bytes"])
 
     bars = []
 
@@ -54,15 +54,16 @@ def crypto_graph(filenames=[], x_label="", y_label=""):
 
     for i, bar in enumerate(bars):
         pos = x_position - BAR_WIDTH * (1 - (2 * i + 1) / len(bars)) / 2
-        ax.bar(pos, bar[1], width=BAR_WIDTH / len(bars), label=bar[0])
+        ax.barh(pos, bar[1], height=BAR_WIDTH / len(bars), label=bar[0])
 
-    ax.ticklabel_format(style="plain", axis="y")
-    ax.set_xlabel("ブロックサイズ[bytes]", fontname=FONT_FAMILY)
-    ax.set_ylabel("1秒あたりの処理数 [KB]", fontname=FONT_FAMILY)
-    ax.set_xticks(x_position)
-    ax.set_xticklabels(x)
-    ax.grid(axis="x")
+    ax.ticklabel_format(style="plain", axis="x")
+    ax.set_ylabel("ブロックサイズ[bytes]", fontname=FONT_FAMILY)
+    ax.set_xlabel("1秒あたりの処理数 [KB]", fontname=FONT_FAMILY)
+    ax.set_yticks(x_position)
+    ax.set_yticklabels(x)
+    ax.grid(axis="y")
     ax.legend()
+    ax.invert_yaxis()
     fig.tight_layout()
     fig.savefig(GRAPH_NAME_CRYPTO)
     logger.info("--> {}".format(GRAPH_NAME_CRYPTO))
@@ -90,7 +91,7 @@ def keyex_graph(filenames=[], x_label="", y_label=""):
                     continue
                 # print(i, l)
                 datas = pat.search(l)
-                label = datas.groups()[0].strip()
+                label = datas.groups()[0].strip().replace("(", "\n(")
                 x.append(label)
                 data = datas.groups()[2]
                 # print(label, data)
@@ -107,14 +108,15 @@ def keyex_graph(filenames=[], x_label="", y_label=""):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.bar(x_position, bar, width=BAR_WIDTH)
+    ax.barh(x_position, bar, height=BAR_WIDTH)
 
-    ax.ticklabel_format(style="plain", axis="y")
-    ax.set_xlabel("楕円曲線の種類", fontname=FONT_FAMILY)
-    ax.set_ylabel("op/s", fontname=FONT_FAMILY)
-    ax.set_xticks(x_position)
-    ax.set_xticklabels(x)
-    ax.grid(axis="x")
+    ax.ticklabel_format(style="plain", axis="x")
+    ax.set_ylabel("楕円曲線の種類", fontname=FONT_FAMILY)
+    ax.set_xlabel("op/s", fontname=FONT_FAMILY)
+    ax.set_yticks(x_position)
+    ax.set_yticklabels(x)
+    ax.grid(axis="y")
+    ax.invert_yaxis()
     fig.tight_layout()
     fig.savefig(GRAPH_NAME_KEYEX)
     logger.info("--> {}".format(GRAPH_NAME_KEYEX))
@@ -145,7 +147,7 @@ def sign_verify_graph(filenames=[], x_label="", y_label=""):
                     continue
                 # print(i, l)
                 datas = pat.search(l)
-                label = datas.groups()[0].strip()
+                label = datas.groups()[0].strip().replace("(", "\n(")
                 x.append(label)
                 sign_data = datas.groups()[3]
                 sign_bar.append(sign_data)
@@ -166,14 +168,15 @@ def sign_verify_graph(filenames=[], x_label="", y_label=""):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.bar(x_position, sign_bar, width=BAR_WIDTH)
+    ax.barh(x_position, sign_bar, height=BAR_WIDTH)
 
-    ax.ticklabel_format(style="plain", axis="y")
-    ax.set_xlabel("楕円曲線の種類", fontname=FONT_FAMILY)
-    ax.set_ylabel("sign/s", fontname=FONT_FAMILY)
-    ax.set_xticks(x_position)
-    ax.set_xticklabels(x)
-    ax.grid(axis="x")
+    ax.ticklabel_format(style="plain", axis="x")
+    ax.set_ylabel("楕円曲線の種類", fontname=FONT_FAMILY)
+    ax.set_xlabel("sign/s", fontname=FONT_FAMILY)
+    ax.set_yticks(x_position)
+    ax.set_yticklabels(x)
+    ax.grid(axis="y")
+    ax.invert_yaxis()
     fig.tight_layout()
     fig.savefig(GRAPH_NAME_SIGN)
     logger.info("--> {}".format(GRAPH_NAME_SIGN))
@@ -184,14 +187,15 @@ def sign_verify_graph(filenames=[], x_label="", y_label=""):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.bar(x_position, verify_bar, width=BAR_WIDTH)
+    ax.barh(x_position, verify_bar, height=BAR_WIDTH)
 
-    ax.ticklabel_format(style="plain", axis="y")
-    ax.set_xlabel("楕円曲線の種類", fontname=FONT_FAMILY)
-    ax.set_ylabel("verify/s", fontname=FONT_FAMILY)
-    ax.set_xticks(x_position)
-    ax.set_xticklabels(x)
-    ax.grid(axis="x")
+    ax.ticklabel_format(style="plain", axis="x")
+    ax.set_ylabel("楕円曲線の種類", fontname=FONT_FAMILY)
+    ax.set_xlabel("verify/s", fontname=FONT_FAMILY)
+    ax.set_yticks(x_position)
+    ax.set_yticklabels(x)
+    ax.grid(axis="y")
+    ax.invert_yaxis()
     fig.tight_layout()
     fig.savefig(GRAPH_NAME_VERIFY)
     logger.info("--> {}".format(GRAPH_NAME_VERIFY))
