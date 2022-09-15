@@ -8,6 +8,8 @@ import numpy as np
 
 FONT_FAMILY = "MS Gothic"
 BAR_WIDTH = 0.8
+GRAPH_NAME_FULL = "full.png"
+GRAPH_NAME_RESUM = "resumption.png"
 GRAPH_NAME_CRYPTO = "crypto.png"
 GRAPH_NAME_KEYEX = "keyex.png"
 GRAPH_NAME_SIGN = "sign.png"
@@ -15,6 +17,92 @@ GRAPH_NAME_VERIFY = "verify.png"
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
+
+
+def handshake_graph(filenames=[], x_label="", y_label=""):
+
+    logger.info(">>>>> handshake_graph")
+
+    BAR_WIDTH = 0.6
+
+    pat_hs = re.compile('^(TLS\d\.\d) full-handshake\:.+; (\d+(?:\.\d+)?) connections.*$')  # fmt: skip # noqa
+    pat_re = re.compile('^(TLS\d\.\d) resumption:.+; (\d+(?:\.\d+)?) connections/user sec,.+$')  # fmt: skip # noqa
+
+    sbn.set()
+    sbn.set_style("whitegrid")
+    sbn.set_palette("PRGn_r")
+
+    hs_x = []
+    re_x = []
+    hs_bar = []
+    re_bar = []
+
+    for filename in filenames:
+        with open(filename, "r") as f:
+            for i, l in enumerate(f):
+                datas = pat_hs.search(l)
+                if datas:
+                    label = datas.groups()[0].strip()
+                    hs_x.append(label)
+                    data = datas.groups()[1]
+                    hs_bar.append(data)
+
+                datas = pat_re.search(l)
+                if datas:
+                    label = datas.groups()[0].strip()
+                    re_x.append(label)
+                    data = datas.groups()[1]
+                    re_bar.append(data)
+
+                # print(label, data)
+
+    hs_x = np.array(hs_x)
+    re_x = np.array(re_x)
+    hs_bar = np.array(hs_bar, np.float32)
+    re_bar = np.array(re_bar, np.float32)
+
+    logger.info(hs_x)
+    logger.info(hs_bar)
+    logger.info(re_x)
+    logger.info(re_bar)
+
+    x_position = np.arange(len(hs_x))
+
+    # full handshake
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.barh(x_position, hs_bar, height=BAR_WIDTH)
+
+    ax.ticklabel_format(style="plain", axis="x")
+    ax.set_ylabel("TLSのバージョン", fontname=FONT_FAMILY)
+    ax.set_xlabel("connections/sec", fontname=FONT_FAMILY)
+    ax.set_yticks(x_position)
+    ax.set_yticklabels(hs_x)
+    ax.grid(axis="y")
+    ax.invert_yaxis()
+    fig.tight_layout()
+    fig.savefig(GRAPH_NAME_FULL)
+    logger.info("--> {}".format(GRAPH_NAME_FULL))
+
+    # resumption
+    x_position = np.arange(len(re_x))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.barh(x_position, re_bar, height=BAR_WIDTH)
+
+    ax.ticklabel_format(style="plain", axis="x")
+    ax.set_ylabel("TLSのバージョン", fontname=FONT_FAMILY)
+    ax.set_xlabel("connections/sec", fontname=FONT_FAMILY)
+    ax.set_yticks(x_position)
+    ax.set_yticklabels(re_x)
+    ax.grid(axis="y")
+    ax.invert_yaxis()
+    fig.tight_layout()
+    fig.savefig(GRAPH_NAME_RESUM)
+    logger.info("--> {}".format(GRAPH_NAME_RESUM))
 
 
 def crypto_graph(filenames=[], x_label="", y_label=""):
@@ -212,7 +300,9 @@ def main():
     type = sys.argv[1]
     filenames = sys.argv[2:]
 
-    if type == "crypto":
+    if type == "handshake":
+        handshake_graph(filenames)
+    elif type == "crypto":
         crypto_graph(filenames)
     elif type == "keyex":
         keyex_graph(filenames)
